@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Audio Visualizer</title>
+	<link href="styles/default-styles.css" type="text/css" rel="stylesheet" />
+	<script src="./src/dat.gui.min.js" type="text/javascript"></script>
+	<script src="./src/loader.js" type="module"></script>
+</head>
+<body>
+<main>
+	<canvas width="800" height="400"></canvas>
+	<div id="controls">
+		<section>
+			<button id="playButton" data-playing="no"></button>
+		
+			<label>Track: 
+				<select id="trackSelect">
+					<option value="media/New Adventure Theme.mp3" selected>New Adventure Theme</option>
+					<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
+					<option value="media/The Picard Song.mp3">The Picard Song</option>
+				</select>
+			</label>
+		</section>
+		
+
+	</div>
+</main>
+</body>
+</html>
