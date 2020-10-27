@@ -17,11 +17,22 @@ let lowPass = Object.seal({
     q : 0.5,
 });
 
+let highShelf = Object.seal({
+    freq : 5000.0,
+    gain : 15,
+});
+
+let lowShelf = Object.seal({
+    freq : 100.0,
+    gain : 15,
+});
+
 
 let audioData = new Uint8Array(DEFAULTS.numSamples/2);
 let highPassFilter;
 let lowPassFilter;
-
+let highBiquadFilter;
+let lowBiquadFilter
 
 function setupWebaudio(filePath){
 // 1 - The || is because WebAudio has not been standardized across browsers yet
@@ -63,16 +74,26 @@ the amplitude of that frequency.
     highPassFilter.type = "highpass";
     highPassFilter.frequency.setValueAtTime(0, audioCtx.currentTime);
     highPassFilter.Q.setValueAtTime(highPass.q, audioCtx.currentTime);
-    
+
+    highBiquadFilter = audioCtx.createBiquadFilter();
+	highBiquadFilter.type = "highshelf";
+	highBiquadFilter.frequency.setValueAtTime(22000.0, audioCtx.currentTime);
+	highBiquadFilter.gain.setValueAtTime(highShelf.gain, audioCtx.currentTime);
 
     lowPassFilter = audioCtx.createBiquadFilter();
     lowPassFilter.type = "lowpass";
     lowPassFilter.frequency.setValueAtTime(22000, audioCtx.currentTime);
     lowPassFilter.Q.setValueAtTime(lowPass.q, audioCtx.currentTime);
 
+    lowBiquadFilter = audioCtx.createBiquadFilter();
+    lowBiquadFilter.type = "lowshelf";
+    lowBiquadFilter.frequency.setValueAtTime(0.0, audioCtx.currentTime);
+	lowBiquadFilter.gain.setValueAtTime(lowShelf.gain, audioCtx.currentTime);
 
 // 9 - connect the nodes - we now have an audio graph
-    sourceNode.connect(highPassFilter);
+    sourceNode.connect(highBiquadFilter);
+    highBiquadFilter.connect(lowBiquadFilter);
+    lowBiquadFilter.connect(highPassFilter);
     highPassFilter.connect(lowPassFilter);
     lowPassFilter.connect(analyserNode);
     analyserNode.connect(gainNode);
@@ -117,6 +138,30 @@ function setLowPassQ(value){
     lowPass.q = value;
 }
 
+function currentPlayPercent(){
+    return element.currentTime / element.duration;
+}
+
+function setHighShelfFreq(value){
+    highBiquadFilter.frequency.setValueAtTime(value, audioCtx.currentTime);
+    highShelf.freq = value;
+}
+
+function setHighShelfGain(value){
+    highBiquadFilter.gain.setValueAtTime(value, audioCtx.currentTime);
+    highShelf.gain = value;
+}
+
+function setLowShelfFreq(value){
+    lowBiquadFilter.frequency.setValueAtTime(value, audioCtx.currentTime);
+    lowShelf.freq = value;
+}
+
+function setLowShelfGain(value){
+    lowBiquadFilter.gain.setValueAtTime(value, audioCtx.currentTime);
+    lowShelf.gain = value;
+}
+
 function toggleHighPass(highPassStatus){
     if(highPassStatus){
         highPassFilter.frequency.setValueAtTime(highPass.freq, audioCtx.currentTime);
@@ -137,6 +182,27 @@ function toggleLowPass(lowPassStatus){
     }
 }
 
-export {audioCtx,setupWebaudio,playCurrentSound,pauseCurrentSound,loadSoundFile,
+function toggleHighShelf(highShelfStatus){
+    if(highShelfStatus){
+        highBiquadFilter.frequency.setValueAtTime(highShelf.freq, audioCtx.currentTime);
+        highBiquadFilter.gain.setValueAtTime(highShelf.gain, audioCtx.currentTime);
+    }else{
+        highBiquadFilter.frequency.setValueAtTime(22000, audioCtx.currentTime);
+        highBiquadFilter.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    }
+}
+
+function toggleLowShelf(lowShelfStatus){
+    if(lowShelfStatus){
+        lowBiquadFilter.frequency.setValueAtTime(lowShelf.freq, audioCtx.currentTime);
+        lowBiquadFilter.gain.setValueAtTime(lowShelf.gain, audioCtx.currentTime);
+    }else{
+        lowBiquadFilter.frequency.setValueAtTime(0, audioCtx.currentTime);
+        lowBiquadFilter.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    }
+}
+
+export {element,audioCtx,setupWebaudio,playCurrentSound,pauseCurrentSound,loadSoundFile,
     setVolume,analyserNode,setHighPassFreq,setHighPassQ,setLowPassFreq,setLowPassQ,
-    toggleHighPass,toggleLowPass};
+    toggleHighPass,toggleLowPass,currentPlayPercent,setHighShelfFreq,setHighShelfGain,setLowShelfFreq,
+    setLowShelfGain,toggleHighShelf,toggleLowShelf};

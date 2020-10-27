@@ -20,7 +20,19 @@ const getLinearGradient = (ctx,startX,startY,endX,endY,colorStops) => {
   return lg;
 };
 
+const goFullscreen = (element) => {
+  if (element.requestFullscreen) {
+      element.requestFullscreen();
+  } else if (element.mozRequestFullscreen) {
+      element.mozRequestFullscreen();
+  } else if (element.mozRequestFullScreen) { // camel-cased 'S' was changed to 's' in spec
+      element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+  }
+  // .. and do nothing if the method is not supported
+};
 
 
 
-export {makeColor, getRandomColor, getLinearGradient};
+export {makeColor, getRandomColor, getLinearGradient, goFullscreen};

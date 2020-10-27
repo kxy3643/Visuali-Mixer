@@ -13,10 +13,10 @@ function setupCanvas(canvasElement,analyserNodeRef){
 	// keep a reference to the analyser node
 	analyserNode = analyserNodeRef;
 	// this is the array where the analyser data will be stored
-	audioData = new Uint8Array(analyserNode.fftSize/2);
+    audioData = new Uint8Array(analyserNode.fftSize/2);
 }
 
-function draw(params){
+function draw(params, playtime){
   // 1 - populate the audioData array with the frequency data from the analyserNode
 	// notice these arrays are passed "by reference" 
 	analyserNode.getByteFrequencyData(audioData);
@@ -35,10 +35,10 @@ function draw(params){
     {
         ctx.save();
         let garishGradient = ctx.createLinearGradient(0,0,canvasWidth,canvasHeight);
-        garishGradient.addColorStop(0, 'papayawhip');
-        garishGradient.addColorStop(0.3, 'aquamarine');
-        garishGradient.addColorStop(0.6, 'cornflowerblue');
-        garishGradient.addColorStop(1, 'springgreen');
+        garishGradient.addColorStop(0, '#0DFFA7');
+        garishGradient.addColorStop(0.3, '#0CE8D6');
+        garishGradient.addColorStop(0.6, '#00CFFF');
+        garishGradient.addColorStop(1, '#0C85E8');
 
         ctx.fillStyle = garishGradient;
         ctx.globalAlpha = .3;
@@ -54,14 +54,37 @@ function draw(params){
         let barWidth = screenWidthForBars / audioData.length;
         let barHeight = 200;
         let topSpacing = 100;
-
         ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        if(params.showGradient)
+        {
+            ctx.fillStyle = '#EEEEEE';
+            ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        }
+        else
+        {
+            ctx.fillStyle = '#0D0D0D';
+            ctx.strokeStyle = 'rgba(255,255,255,255.5)';
+        }
+
+        
+
         for(let i=0; i<audioData.length; i++){
-            
+            ctx.save();
+            if(i/audioData.length < playtime)
+            {
+                if(params.showGradient)
+                {
+                    ctx.fillStyle = '#0D0D0D';
+                }
+                else
+                {
+                    ctx.fillStyle = '#EEEEEE';
+                }
+            }
+
             ctx.fillRect(margin + i*(barWidth + barSpacing), topSpacing + 256-audioData[i], barWidth, barHeight);
             ctx.strokeRect(margin + i*(barWidth + barSpacing), topSpacing + 256-audioData[i], barWidth, barHeight);
+            ctx.restore();
         }
         ctx.restore();
     }
@@ -75,25 +98,48 @@ function draw(params){
             let percent = audioData[i] / 255;
 
             let circleRadius = percent * maxRadius;
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(255,111,111,.34 - percent/3.0);
-            ctx.arc(canvasWidth/2, canvasHeight/2, circleRadius, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
 
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(0,0,255,.10 - percent/10.0);
-            ctx.arc(canvasWidth/2, canvasHeight/2, circleRadius * 1.5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
+            if(i < 10)
+            {
+                ctx.save();
+                ctx.beginPath();
+                if(params.showGradient)
+                {
+                    ctx.fillStyle = utils.makeColor(242,218,189,.5 - percent/5.0);
+                }
+                else
+                {
+                    ctx.fillStyle = utils.makeColor(242,218,189,.3 - percent/5.0);
+                }
+                ctx.arc(canvasWidth/4, canvasHeight/2, circleRadius, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.closePath();
+                ctx.restore();
+            }
 
-            ctx.save();
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(200,200,0,.5 - percent/5.0);
-            ctx.arc(canvasWidth/2, canvasHeight/2, circleRadius * 0.50, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
-            ctx.restore();
+            if(i > 10 && i< 25)
+            {
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = utils.makeColor(140,114,100,.5 - percent/5.0);
+                ctx.arc(canvasWidth/2, canvasHeight/2, circleRadius, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            if(i > 25)
+            {
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = utils.makeColor(64,52,41,.34 - percent/3.0);
+                ctx.arc(canvasWidth/4*3, canvasHeight/2, circleRadius, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            
         }
         ctx.restore();
     }

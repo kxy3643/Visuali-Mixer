@@ -1,6 +1,8 @@
 body {
 	background: #eeeeee;
-	font-family: tahoma, verdana, sans serif;
+  font-family: tahoma, verdana, sans serif;
+  display: flex;
+  justify-content: center;
 }
 
 canvas {
@@ -13,6 +15,8 @@ canvas {
 
 #controls{
   margin-left: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 #volumeLabel{
