@@ -142,6 +142,14 @@ function currentPlayPercent(){
     return element.currentTime / element.duration;
 }
 
+function currentPlayTime(){
+    return element.currentTime;
+}
+
+function currentDuration(){
+    return element.duration;
+}
+
 function setHighShelfFreq(value){
     highBiquadFilter.frequency.setValueAtTime(value, audioCtx.currentTime);
     highShelf.freq = value;
@@ -205,4 +213,4 @@ function toggleLowShelf(lowShelfStatus){
 export {element,audioCtx,setupWebaudio,playCurrentSound,pauseCurrentSound,loadSoundFile,
     setVolume,analyserNode,setHighPassFreq,setHighPassQ,setLowPassFreq,setLowPassQ,
     toggleHighPass,toggleLowPass,currentPlayPercent,setHighShelfFreq,setHighShelfGain,setLowShelfFreq,
-    setLowShelfGain,toggleHighShelf,toggleLowShelf};
+    setLowShelfGain,toggleHighShelf,toggleLowShelf,currentPlayTime,currentDuration};

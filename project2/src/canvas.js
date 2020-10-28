@@ -144,6 +144,40 @@ function draw(params, playtime){
         ctx.restore();
     }
 
+    if(params.showWaveform)
+    {
+        ctx.save();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = utils.getRandomColor();
+        ctx.beginPath();
+        let sliceWidth = canvasWidth/(audioData.length/2);
+
+        let x = 0;
+
+        for(let i = 0; i<audioData.length; i++)
+        {
+            let v = audioData[i] / 128.0;
+            let y = v * canvasHeight/2;
+
+            if(i===0)
+            {
+                ctx.moveTo(x,y);
+            }
+            else
+            {
+                ctx.lineTo(x,y);
+            }
+
+            x+= sliceWidth;
+        }
+
+        ctx.lineTo(canvasWidth, canvasHeight/2);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+
     // 6 - bitmap manipulation
 	// TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
 	// regardless of whether or not we are applying a pixel effect
@@ -173,7 +207,7 @@ function draw(params, playtime){
 			// data[i+1] is the green channel
 			// data[i+2] is the blue channel
 			// data[i+3] is the alpha channel
-			data[i] = data[i+1] = data[i+2] = 255// zero out the red and green and blue channels
+			data[i] = data[i+1] = data[i+2] = 255;// zero out the red and green and blue channels
 			//data[i] = 255;// make the red channel 100% red
         } // end if
         

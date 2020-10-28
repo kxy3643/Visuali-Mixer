@@ -6,6 +6,7 @@ let drawParams = {
   showGradient : true,
   showBars : true,
   showCircles : true,
+  showWaveform : false,
   showNoise : false,
   showInvert : false,
 };
@@ -14,7 +15,7 @@ let drawParams = {
 const gui = new dat.GUI({ width: 400 });
 
 const DEFAULTS = Object.freeze({
-	sound1  :  "media/New Adventure Theme.mp3"
+	sound1  :  "media/Hopes and Dreams.flac"
 });
 
 function init(){
@@ -35,6 +36,7 @@ const controllerObj = {
   _showBars : true,
   _showGradient : true,
   _showCircles : true,
+  _showWaveform : false,
   _showNoise : false,
   _showInvert : false,
   _synthHighPass : false,
@@ -60,6 +62,9 @@ const controllerObj = {
 
   get showCircles(){return this._showCircles;},
   set showCircles(value){this._showCircles = value; drawParams.showCircles = value;},
+
+  get showWaveform(){return this._showWaveform;},
+  set showWaveform(value){this._showWaveform = value; drawParams.showWaveform = value;},
 
   get showNoise(){return this._showNoise;},
   set showNoise(value){this._showNoise = value; drawParams.showNoise = value;},
@@ -117,6 +122,8 @@ const controllerObj = {
 };
 
 let playButton;
+let playTime;
+let userTrack, userFile;
 let canvasFolder, audioFolder, visFolder, maniFolder, hpfolder, lowfolder, hpcheck, lowcheck, 
 hfreq,hq,lfreq,lq, djCheck, volumeSlider, hsfolder, lsfolder, hscheck, lscheck, hsfreq, hsgain,
 lsfreq, lsgain, replayCheck;
@@ -124,9 +131,10 @@ lsfreq, lsgain, replayCheck;
 function setupUI(canvasElement){
   
   //gui.close();
-
+  playTime = document.querySelector("#playTime");
   playButton = document.querySelector("#playButton");
   let trackSelect = document.querySelector("#trackSelect");
+  userTrack = document.querySelector("#userTrack");
   const fsButton = document.querySelector("#fsButton");
 
   fsButton.onclick = e => {
@@ -155,6 +163,24 @@ function setupUI(canvasElement){
     };
   };
 
+  userTrack.addEventListener("change", loadUserTrack, false)
+
+  function loadUserTrack() {
+    if(this.files[0] != undefined)
+    {
+      userFile = audio.loadSoundFile(URL.createObjectURL(this.files[0]));
+      let userUpload = document.createElement("option");
+      userUpload.text = this.files[0].name;
+      userUpload.value = URL.createObjectURL(this.files[0]);
+      userUpload.selected = true;
+      trackSelect.appendChild(userUpload);
+      if(playButton.dataset.playing == "yes")
+      {
+        playButton.dispatchEvent(new MouseEvent("click"));
+      }
+    }
+  };
+
 } // end setupUI
 
 function setupGUI()
@@ -172,6 +198,7 @@ function setupGUI()
   visFolder.add(controllerObj, 'showBars').name('Show Bars');
   visFolder.add(controllerObj, 'showGradient').name('Show Gradient');
   visFolder.add(controllerObj, 'showCircles').name('Show Circles');
+  visFolder.add(controllerObj, 'showWaveform').name('Show Waveform');
   maniFolder.add(controllerObj, 'showNoise').name('Show Noise');
   maniFolder.add(controllerObj, 'showInvert').name('Show Invert');
 
@@ -312,7 +339,10 @@ function loop(){
   else if(audio.currentPlayPercent() == 1 && controllerObj.replay){
     playButton.dispatchEvent(new MouseEvent("click"));
   }
-
+  if(playButton.dataset.playing == "yes")
+  {
+    playTime.innerHTML = `Current Play Time: ${parseInt(audio.currentPlayTime())}(s) / ${parseInt(audio.currentDuration())}(s)`;
+  }
 
 }
 

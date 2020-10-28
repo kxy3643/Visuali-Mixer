@@ -2,29 +2,33 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Audio Visualizer</title>
+	<title>The Audio Visuali-mixer</title>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
 	<link href="styles/default-styles.css" type="text/css" rel="stylesheet" />
 	<script src="./src/dat.gui.min.js" type="text/javascript"></script>
 	<script src="./src/loader.js" type="module"></script>
 </head>
 <body>
 <main>
+	<h1>The Audio Visuali-mixer</h1>
 	<canvas width="800" height="400"></canvas>
 	<div id="controls">
 		<section>
 			<button id="playButton" data-playing="no"></button>
 			<button id="fsButton">Full Screen</button>
-		
-			<label>Track: 
+
+			<label id="playTime">Current Play Time: --(s)</label>
+		</section>
+		<section>
+			<label for="trackSelect">Track: 
 				<select id="trackSelect">
-					<option value="media/New Adventure Theme.mp3" selected>New Adventure Theme</option>
-					<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
+					<option value="media/Hopes and Dreams.flac" selected>Hopes and Dreams</option>
+					<option value="media/The Man Who Sold The World.mp3">The Man Who Sold The World</option>
 					<option value="media/CheapTunes.wav">CheapTunes</option>
 				</select>
 			</label>
+			<label for="userTrack">Choose your own! => <input type="file" id="userTrack" accept=".wav,.mp3,.mp4,.adts,.ogg,.webm,.flac"></label>
 		</section>
-		
-
 	</div>
 </main>
 </body>
