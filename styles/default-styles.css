@@ -16,9 +16,6 @@ footer{
   bottom: 1%;
   left: 45%;
   font-size: small;
-  display: flex;
-  align-content: flex-end;
-  justify-content: center;
 }
 
 main label{
