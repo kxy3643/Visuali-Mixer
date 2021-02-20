@@ -21,14 +21,6 @@ footer{
   justify-content: center;
 }
 
-footer p{
-  margin: 0 0 0 0;
-  padding: 0 0 0 0;
-  color: #000;
-  font-family: "Open Sans";
-  font-weight: bold;
-}
-
 main label{
   font-size: 1.1rem;
 }
